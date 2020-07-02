@@ -1,6 +1,7 @@
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:camera/camera.dart';
 import 'dart:io';
+import 'package:geolocator/geolocator.dart';
 
 import '../screens/camera_screen.dart';
 
@@ -32,9 +33,20 @@ class Surveypage extends StatefulWidget {
 class _SurveypageState extends State<Surveypage> {
   var image;
   _SurveypageState(this.image);
+
+  fetchLocation() async {
+    // GeolocationStatus status =
+    //     await Geolocator().checkGeolocationPermissionStatus();
+    // print(status.toString());
+    Position position = await Geolocator()
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    print(position.latitude.toString() + ":" + position.longitude.toString());
+  }
+
   @override
   Widget build(BuildContext context) {
     var _location = "234.56N";
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Survey'),
@@ -73,8 +85,8 @@ class _SurveypageState extends State<Surveypage> {
                 children: <Widget>[
                   Padding(
                     padding: EdgeInsets.all(20),
-                    child:
-                        RaisedButton(child: Text('Location'), onPressed: () {}),
+                    child: RaisedButton(
+                        child: Text('Location'), onPressed: fetchLocation),
                   ),
                   Padding(
                     padding: EdgeInsets.all(15),
