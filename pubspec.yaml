@@ -31,6 +31,12 @@ dependencies:
   camera:
   path_provider:
   path:
+  http:
+  geolocator:
+  permission_handler:
+
+  #Below package is only used to preview app on various devices and not for production release
+  device_preview: 0.4.5
 
 dev_dependencies:
   flutter_test:

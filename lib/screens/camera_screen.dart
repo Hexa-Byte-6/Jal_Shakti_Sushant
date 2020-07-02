@@ -2,8 +2,12 @@ import 'dart:async';
 import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:jal_shakti_sush/screens/survey_page.dart';
 import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';
+
+import '../classes/upload_data.dart';
+//import 'package:http/http.dart' as http;
 
 // A screen that allows users to take a picture using a given camera.
 class TakePictureScreen extends StatefulWidget {
@@ -31,7 +35,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
       // Get a specific camera from the list of available cameras.
       widget.camera,
       // Define the resolution to use.
-      ResolutionPreset.medium,
+      ResolutionPreset.max,
     );
 
     // Next, initialize the controller. This returns a Future.
@@ -64,8 +68,9 @@ class TakePictureScreenState extends State<TakePictureScreen> {
           }
         },
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.camera_alt),
+        child: Icon(Icons.camera),
         // Provide an onPressed callback.
         onPressed: () async {
           // Take the Picture in a try / catch block. If anything goes wrong,
@@ -109,6 +114,16 @@ class DisplayPictureScreen extends StatelessWidget {
 
   const DisplayPictureScreen({Key key, this.imagePath}) : super(key: key);
 
+  sendImageToServer(imagePath) async {
+    UploadData request = UploadData();
+    bool sent = await request.sendDataToServer(imagePath, '/uploadImage');
+    if (sent) {
+      print(request.getResponse());
+    } else {
+      print(request.getErrorResponse());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     MediaQueryData mediaQueryData = MediaQuery.of(context);
@@ -133,26 +148,42 @@ class DisplayPictureScreen extends StatelessWidget {
               ),
             ),
           ),
-          Positioned(
-            bottom: 25,
-            child: Row(
-              children: <Widget>[
-                RaisedButton(
-                  child: Text('Re-take picture'),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                RaisedButton(
-                  child: Text('Confirm'),
-                  onPressed: () {
-                    Navigator.pop(context); //Go back to take picture screen
-                    Navigator.pop(context); //Go back to mai screen where you came from
-                  },
-                ),
-              ],
+          Container(
+            alignment: Alignment.bottomCenter,
+            child: Positioned(
+              child: ButtonBar(
+                buttonPadding: EdgeInsets.all(20),
+                alignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  RaisedButton(
+                    padding: EdgeInsets.all(15),
+                    child: Text('Re-take picture'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  RaisedButton(
+                    padding: EdgeInsets.all(15),
+                    child: Text('Confirm'),
+                    onPressed: () {
+                      if (imagePath != null) {
+                        debugPrint('I have image path');
+                        sendImageToServer(imagePath);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Surveypage(imagePath)));
+                      } else {
+                        Navigator.pop(context); //Go back to take picture screen
+                        Navigator.pop(
+                            context); //Go back to mai screen where you came from
+                      }
+                    },
+                  ),
+                ],
+              ),
             ),
-          )
+          ),
         ],
       ),
     );

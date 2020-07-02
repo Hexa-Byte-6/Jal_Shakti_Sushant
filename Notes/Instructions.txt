@@ -1,0 +1,14 @@
+[#] MongoDB [#]
+    1)Go to Services, find MongoDB and Start it.
+    2)Run mongo server using following command:
+        C:\Program Files\MongoDB\Server\4.2\bin\mongo.exe
+
+[#] Flask [#]
+
+    1)Create a virtual environment for flask and activate it
+        C:\Users\DELL\AppData\Local\Programs\Python\Python37\VirtualEnvironment\venv\scripts\activate
+    2)Run the flask app inside virtual environment
+        python main.py
+
+    ((Link: https://www.tutorialspoint.com/flask/flask_environment.htm))
+
