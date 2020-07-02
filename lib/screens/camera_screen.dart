@@ -6,6 +6,9 @@ import 'package:jal_shakti_sush/screens/survey_page.dart';
 import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';
 
+import '../classes/upload_data.dart';
+//import 'package:http/http.dart' as http;
+
 // A screen that allows users to take a picture using a given camera.
 class TakePictureScreen extends StatefulWidget {
   final CameraDescription camera;
@@ -111,6 +114,16 @@ class DisplayPictureScreen extends StatelessWidget {
 
   const DisplayPictureScreen({Key key, this.imagePath}) : super(key: key);
 
+  sendImageToServer(imagePath) async {
+    UploadData request = UploadData();
+    bool sent = await request.sendDataToServer(imagePath, '/uploadImage');
+    if (sent) {
+      print(request.getResponse());
+    } else {
+      print(request.getErrorResponse());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     MediaQueryData mediaQueryData = MediaQuery.of(context);
@@ -155,6 +168,7 @@ class DisplayPictureScreen extends StatelessWidget {
                     onPressed: () {
                       if (imagePath != null) {
                         debugPrint('I have image path');
+                        sendImageToServer(imagePath);
                         Navigator.push(
                             context,
                             MaterialPageRoute(

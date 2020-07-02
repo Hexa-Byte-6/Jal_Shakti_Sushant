@@ -26,10 +26,12 @@ class Surveypage extends StatefulWidget {
   }
 
   @override
-  _SurveypageState createState() => _SurveypageState();
+  _SurveypageState createState() => _SurveypageState(imagePath);
 }
 
 class _SurveypageState extends State<Surveypage> {
+  var image;
+  _SurveypageState(this.image);
   @override
   Widget build(BuildContext context) {
     var _location = "234.56N";
@@ -56,10 +58,10 @@ class _SurveypageState extends State<Surveypage> {
                   }));
                 }),
             Container(
-              child: widget.imagePath == "no image"
+              child: image == "no-image"
                   ? Text('No image captured')
                   : Image.file(
-                      File(widget.imagePath),
+                      File(image),
                       width: 200,
                       height: 200,
                     ),
