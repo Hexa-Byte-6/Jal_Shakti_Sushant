@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:jal_shakti_sush/screens/survey_page.dart';
 import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';
 
@@ -12,11 +11,9 @@ import '../classes/upload_data.dart';
 // A screen that allows users to take a picture using a given camera.
 class TakePictureScreen extends StatefulWidget {
   final CameraDescription camera;
-
-  const TakePictureScreen({
-    Key key,
-    @required this.camera,
-  }) : super(key: key);
+  final Function setImage;
+  const TakePictureScreen({Key key, @required this.camera, this.setImage})
+      : super(key: key);
 
   @override
   TakePictureScreenState createState() => TakePictureScreenState();
@@ -95,7 +92,8 @@ class TakePictureScreenState extends State<TakePictureScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => DisplayPictureScreen(imagePath: path),
+                builder: (context) => DisplayPictureScreen(
+                    imagePath: path, setImagepath: widget.setImage),
               ),
             );
           } catch (e) {
@@ -111,8 +109,9 @@ class TakePictureScreenState extends State<TakePictureScreen> {
 // A widget that displays the picture taken by the user.
 class DisplayPictureScreen extends StatelessWidget {
   final String imagePath;
-
-  const DisplayPictureScreen({Key key, this.imagePath}) : super(key: key);
+  final Function setImagepath;
+  const DisplayPictureScreen({Key key, this.imagePath, this.setImagepath})
+      : super(key: key);
 
   sendImageToServer(imagePath) async {
     UploadData request = UploadData();
@@ -148,40 +147,35 @@ class DisplayPictureScreen extends StatelessWidget {
               ),
             ),
           ),
-          Container(
-            alignment: Alignment.bottomCenter,
-            child: Positioned(
-              child: ButtonBar(
-                buttonPadding: EdgeInsets.all(20),
-                alignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  RaisedButton(
-                    padding: EdgeInsets.all(15),
-                    child: Text('Re-take picture'),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                  RaisedButton(
-                    padding: EdgeInsets.all(15),
-                    child: Text('Confirm'),
-                    onPressed: () {
-                      if (imagePath != null) {
-                        debugPrint('I have image path');
-                        sendImageToServer(imagePath);
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Surveypage(imagePath)));
-                      } else {
-                        Navigator.pop(context); //Go back to take picture screen
-                        Navigator.pop(
-                            context); //Go back to mai screen where you came from
-                      }
-                    },
-                  ),
-                ],
-              ),
+          Positioned(
+            bottom: 10,
+            left: 20,
+            child: ButtonBar(
+              buttonPadding: EdgeInsets.all(20),
+              alignment: MainAxisAlignment.center,
+              children: <Widget>[
+                RaisedButton(
+                  padding: EdgeInsets.all(15),
+                  child: Text('Re-take picture'),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                RaisedButton(
+                  padding: EdgeInsets.all(15),
+                  child: Text('Confirm'),
+                  onPressed: () {
+                    if (imagePath != null) {
+                      setImagepath(imagePath);
+                      sendImageToServer(imagePath);
+                    }
+                    //Go back to take picture screen
+                    Navigator.pop(context);
+                    //Go back to main screen where you came from
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
             ),
           ),
         ],
