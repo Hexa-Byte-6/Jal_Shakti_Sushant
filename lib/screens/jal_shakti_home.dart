@@ -1,33 +1,42 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
+import 'package:jal_shakti_sush/custom-widgets/admin_drawer.dart';
 import '../custom-widgets/introduction_card.dart';
 import './survey_page.dart';
 
-class JalShaktiHome extends StatelessWidget {
-  Future<http.Response> getDataFromServer() async {
-    var response = await http
-        .get("http://192.168.43.117:5000/getData")
-        .catchError((error) {
-      print("Error");
-      print(error);
-    });
-    print('Response');
-    print(response.body);
-    return response;
-  }
+class JalShaktiHome extends StatefulWidget {
+  @override
+  _JalShaktiHomeState createState() => _JalShaktiHomeState();
+}
 
-  printData() {
-    print("I have this:");
-    print(getDataFromServer());
-  }
+class _JalShaktiHomeState extends State<JalShaktiHome> {
+  final String user = "admin";
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return Container(
       child: Scaffold(
+        key: _scaffoldKey,
+        drawer: AdminDrawer(),
+        // drawer: user == "admin"
+        //     ? AdminDrawer()
+        //     : Visibility(
+        //         child: Drawer(),
+        //         visible: false,
+        //       ),
         appBar: AppBar(
           title: Text('Jal Shakti'),
+          leading: user != "admin"
+              ? Container()
+              : IconButton(
+                  icon: Icon(
+                    Icons.menu,
+                  ),
+                  onPressed: () {
+                    _scaffoldKey.currentState.openDrawer();
+                  },
+                ),
         ),
         body: Container(
           child: Column(
@@ -35,18 +44,9 @@ class JalShaktiHome extends StatelessWidget {
               Center(
                 child: IntroductionCard(),
               ),
-              // RaisedButton(
-              //     child: Text('Capture picture'),
-              //     onPressed: () {
-              //       Navigator.push(context,
-              //           MaterialPageRoute(builder: (context) {
-              //         return TakePictureScreen(camera: firstCamera) ;
-              //       }));
-              //     }),
               RaisedButton(
                 child: Text('Start Survey'),
-                onPressed: //printData
-                    () {
+                onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
                     return Surveypage("no-image");
                   }));
