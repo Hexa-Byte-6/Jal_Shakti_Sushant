@@ -45,7 +45,7 @@ class UploadData {
       var responseString = String.fromCharCodes(responseData);
       _setResponse(responseString);
     } else {
-      _setErrorResponse("Some error occured");
+      _setErrorResponse("Some error occured uploading image");
     }
 
     return flag;
