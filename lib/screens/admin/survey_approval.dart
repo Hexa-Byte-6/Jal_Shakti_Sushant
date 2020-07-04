@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:jal_shakti_sush/custom-widgets/admin_drawer.dart';
 
 class SurveyApprovalScreen extends StatelessWidget {
   @override
@@ -8,7 +7,6 @@ class SurveyApprovalScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text("Approval"),
       ),
-      drawer: AdminDrawer(),
       body: Center(
         child: Text("Approve survey data"),
       ),

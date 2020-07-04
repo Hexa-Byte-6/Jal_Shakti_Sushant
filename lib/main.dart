@@ -22,6 +22,10 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Jal SHakti',
+      theme: ThemeData(
+          primaryColor: defaultTargetPlatform == TargetPlatform.iOS
+              ? Colors.white
+              : null),
       builder: DevicePreview.appBuilder,
       debugShowCheckedModeBanner: false,
       home: new JalShaktiHome(),

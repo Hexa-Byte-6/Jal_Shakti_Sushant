@@ -36,19 +36,21 @@ class AdminDrawer extends StatelessWidget {
                   children: <Widget>[
                     ListTile(
                       title: Text("Home"),
+                      trailing: Icon(Icons.home),
                       onTap: () {
                         Navigator.pop(context);
-                        Navigator.pushReplacement(context,
+                        Navigator.push(context,
                             MaterialPageRoute(builder: (BuildContext context) {
                           return JalShaktiHome();
                         }));
                       },
                     ),
                     ListTile(
-                      title: Text("Video Approval"),
+                      title: Text("Survey Approval"),
+                      trailing: Icon(Icons.event_note),
                       onTap: () {
-                        Navigator.pop(context);
-                        Navigator.pushReplacement(context,
+                        Navigator.of(context).pop();
+                        Navigator.push(context,
                             MaterialPageRoute(builder: (BuildContext context) {
                           return SurveyApprovalScreen();
                         }));
@@ -56,30 +58,35 @@ class AdminDrawer extends StatelessWidget {
                     ),
                     ListTile(
                       title: Text("Survey"),
+                      trailing: Icon(Icons.assignment),
                       onTap: () {
-                        Navigator.pop(context);
-                        debugPrint("Survey item tapped");
+                        Navigator.of(context).pop();
+
                         Navigator.push(context,
                             MaterialPageRoute(builder: (BuildContext context) {
-                          debugPrint("Going to survey page");
                           return Surveypage("no-image");
                         }));
                       },
                     ),
                     ListTile(
-                      title: Text("Emergency alert"),
+                      title: Text("Report Problem"),
+                      trailing: Icon(Icons.error_outline),
                       onTap: () {
-                        Navigator.pop(context);
-                        Navigator.pushReplacement(context,
+                        Navigator.of(context).pop();
+                        Navigator.push(context,
                             MaterialPageRoute(builder: (BuildContext context) {
                           return EmergencyReport();
                         }));
                       },
                     ),
+                    Divider(
+                      endIndent: 10,
+                    ),
                     ListTile(
                       title: Text("Sign out"),
+                      trailing: Icon(Icons.power_settings_new),
                       onTap: () {
-                        Navigator.pop(context);
+                        Navigator.of(context).pop();
                       },
                     ),
                   ],
