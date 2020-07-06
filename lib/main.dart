@@ -24,7 +24,7 @@ class _MyAppState extends State<MyApp> {
       title: 'Jal SHakti',
       theme: ThemeData(
           primaryColor: defaultTargetPlatform == TargetPlatform.iOS
-              ? Colors.white
+              ? Colors.grey[50]
               : null),
       builder: DevicePreview.appBuilder,
       debugShowCheckedModeBanner: false,

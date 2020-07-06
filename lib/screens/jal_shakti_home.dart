@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:jal_shakti_sush/custom-widgets/admin_drawer.dart';
+import 'package:jal_shakti_sush/screens/more_info.dart';
 import '../custom-widgets/introduction_card.dart';
 import './survey_page.dart';
 
@@ -18,6 +19,15 @@ class _JalShaktiHomeState extends State<JalShaktiHome> {
         drawer: user == "admin" ? AdminDrawer() : null,
         appBar: AppBar(
           title: Text('Jal Shakti'),
+          actions: <Widget>[
+            IconButton(
+                icon: Icon(Icons.help_outline),
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return MoreInfo();
+                  }));
+                })
+          ],
         ),
         body: Container(
           child: Column(
