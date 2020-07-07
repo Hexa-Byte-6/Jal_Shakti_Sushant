@@ -6,6 +6,10 @@
 4) http
 5)geo_locator
 6)permission_handler
+7)url_launcher
+8)flutter_localizations:
+    sdk: flutter
+
 
 [#] Changes in ios folder:
 

@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:jal_shakti_sush/classes/localization/localization.dart';
+import 'dart:io';
+
 import 'package:jal_shakti_sush/screens/fullscreen_image.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SurveyDetails extends StatelessWidget {
   final String user, date;
   //final imageUrl = "https://picsum.photos/250?image=9";
   final imageUrl =
       "https://images.unsplash.com/photo-1497250681960-ef046c08a56e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60";
+
+  final String lat = "18.9966445";
+  final String long = "73.9458459";
+  // final String lat = "18.9687697";
+  // final String long = "73.9454965";
 
   SurveyDetails({
     this.user,
@@ -44,20 +53,31 @@ class SurveyDetails extends StatelessWidget {
     final surveyDetailsHeader = Container(
       height: 100,
       width: double.maxFinite,
-      child: Card(
-        elevation: 5,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(top: 15, bottom: 10, left: 20),
-              child: Text("Survey from: " + user),
+      child: Container(
+        child: Card(
+          elevation: 5,
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border(
+                left: BorderSide(width: 4, color: Colors.blue),
+              ),
             ),
-            Padding(
-              padding: EdgeInsets.only(top: 5, bottom: 10, left: 20),
-              child: Text("Date: " + date),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(top: 15, bottom: 10, left: 20),
+                  child: Text(
+                      AppLocalizations.of(context).surveyer + " : " + user),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 5, bottom: 10, left: 20),
+                  child: Text(
+                      AppLocalizations.of(context).surveyDate + " : " + date),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -102,6 +122,85 @@ class SurveyDetails extends StatelessWidget {
       ),
     );
 
+    final imageLocationDetails = Container(
+      width: double.maxFinite,
+      child: Card(
+        elevation: 5,
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border(
+              left: BorderSide(width: 4, color: Colors.blue),
+            ),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Expanded(
+                flex: 2,
+                child: Center(
+                  child: Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 10,
+                          bottom: 5,
+                        ),
+                        child: Text(AppLocalizations.of(context).imageLocation),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                          top: 5,
+                          bottom: 10,
+                        ),
+                        child: Text(
+                          "$lat,$long",
+                          style: TextStyle(color: Colors.lightBlueAccent),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: Center(
+                  child: RaisedButton(
+                    child: Text(AppLocalizations.of(context).seeOnMap),
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                      side: BorderSide(width: 2, color: Colors.blue),
+                    ),
+                    onPressed: () async {
+                      final String googleMapsUrl =
+                          "https://www.google.com/maps/search/?api=1&query=$lat,$long";
+
+                      final String appleMapsUrl =
+                          "https://maps.apple.com/?q=$lat,$long";
+
+                      if (Platform.isAndroid) {
+                        if (await canLaunch(googleMapsUrl)) {
+                          await launch(googleMapsUrl);
+                        }
+                      }
+                      if (Platform.isIOS) {
+                        if (await canLaunch(appleMapsUrl)) {
+                          await launch(appleMapsUrl, forceSafariVC: false);
+                        }
+                      } else {
+                        debugPrint("Couldn't launch URL");
+                      }
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
     final approvalWarning = Container(
       width: MediaQuery.of(context).size.width,
       child: Padding(
@@ -115,7 +214,7 @@ class SurveyDetails extends StatelessWidget {
             ),
             Expanded(
               child: Text(
-                "Before approving the survey data, ensure it is correct and relevant to river embankments as per your knowledge.",
+                AppLocalizations.of(context).surveyApprovalWarning,
                 style: TextStyle(
                   color: Colors.grey,
                 ),
@@ -132,7 +231,7 @@ class SurveyDetails extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(8),
           child: RaisedButton(
-            child: Text("Deny"),
+            child: Text(AppLocalizations.of(context).deny),
             color: Colors.white,
             elevation: 5,
             onPressed: () {},
@@ -142,7 +241,7 @@ class SurveyDetails extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: RaisedButton(
             child: Text(
-              "Approve",
+              AppLocalizations.of(context).approve,
               style: TextStyle(color: Colors.white),
             ),
             color: Colors.blue,
@@ -165,6 +264,7 @@ class SurveyDetails extends StatelessWidget {
           children: <Widget>[
             surveyDetailsHeader,
             surveyImage,
+            imageLocationDetails,
             approvalWarning,
             approvalSection,
           ],

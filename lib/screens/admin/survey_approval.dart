@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jal_shakti_sush/classes/localization/localization.dart';
 
 import 'package:jal_shakti_sush/classes/survey_approval_data.dart';
 import 'package:jal_shakti_sush/screens/admin/survey_approval_help.dart';
@@ -7,6 +8,7 @@ import 'package:jal_shakti_sush/screens/admin/survey_details.dart';
 class SurveyApprovalScreen extends StatelessWidget {
   final surveys = PendingSurveys.surveys;
 
+//The build method
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,7 +21,7 @@ class SurveyApprovalScreen extends StatelessWidget {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
                   return ApprovalHelp();
                 }));
-              })
+              }),
         ],
       ),
       body: Container(
@@ -51,7 +53,7 @@ class SurveyDescriptionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-      height: 150,
+      height: 140,
       width: double.maxFinite,
       child: Card(
         elevation: 5,
@@ -63,7 +65,7 @@ class SurveyDescriptionCard extends StatelessWidget {
             border: Border(
               left: BorderSide(
                   width: 4,
-                  color: status == "pending" ? Colors.red : Colors.green),
+                  color: status == "pending" ? Colors.redAccent : Colors.green),
             ),
           ),
           child: Column(
@@ -90,12 +92,14 @@ class SurveyDescriptionCard extends StatelessWidget {
                 ],
               ),
               Padding(
-                padding: EdgeInsets.only(left: 10, bottom: 5, top: 5),
-                child: Text("Name : " + user),
+                padding: EdgeInsets.all(5),
+                child: Text(
+                    AppLocalizations.of(context).surveyerName + " : " + user),
               ),
               Padding(
-                padding: EdgeInsets.only(left: 10, bottom: 5, top: 5),
-                child: Text("Survey date : " + date),
+                padding: EdgeInsets.all(5),
+                child: Text(
+                    AppLocalizations.of(context).surveyDate + " : " + date),
               ),
               Align(
                 alignment: Alignment.bottomRight,
@@ -104,7 +108,6 @@ class SurveyDescriptionCard extends StatelessWidget {
                   child: status == "pending"
                       ? GestureDetector(
                           onTap: () {
-                            debugPrint("Approve icon clicked................");
                             //go to survey details screen
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (context) {
@@ -113,9 +116,10 @@ class SurveyDescriptionCard extends StatelessWidget {
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
                               Text(
-                                "Approve",
+                                AppLocalizations.of(context).check,
                                 style: TextStyle(color: Colors.grey),
                               ),
                               Icon(
@@ -125,9 +129,15 @@ class SurveyDescriptionCard extends StatelessWidget {
                             ],
                           ),
                         )
-                      : Text(
-                          "Approved",
-                          style: TextStyle(color: Colors.grey),
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            Text(
+                              AppLocalizations.of(context).approved,
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ],
                         ),
                 ),
               )
