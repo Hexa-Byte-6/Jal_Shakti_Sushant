@@ -12,3 +12,6 @@
 
     ((Link: https://www.tutorialspoint.com/flask/flask_environment.htm))
 
+
+[#] App [#]
+Build the app on codemagic
