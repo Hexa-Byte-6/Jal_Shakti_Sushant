@@ -64,7 +64,13 @@ class _MyAppState extends State<MyApp> {
         const Locale('hi', ''), // Hindi
       ],
       locale: locale,
-      home: new JalShaktiHome(),
+      home: SafeArea(
+        child: Stack(
+          children: <Widget>[
+            JalShaktiHome(),
+          ],
+        ),
+      ),
     );
   }
 

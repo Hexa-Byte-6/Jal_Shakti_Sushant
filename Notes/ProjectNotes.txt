@@ -9,6 +9,8 @@
 7)url_launcher
 8)flutter_localizations:
     sdk: flutter
+9)overlay_container
+10)sliding_up_panel
 
 
 [#] Changes in ios folder:
@@ -17,16 +19,10 @@
         Add following lines:
     <key>NSCameraUsageDescription</key>
 	<string>Can I use the camera please?</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Can I use the mic please?</string>
 
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>This app needs access to location when open.</string>
-    <key>NSLocationAlwaysUsageDescription</key>
-    <string>This app needs access to location when in the background.</string>
-    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>This app needs access to location when open and in the background.</string>
-
+    
 
 
 [#] Changes in android folder:
@@ -37,5 +33,6 @@
     2) Add permissions in android/app/src/main/AndroidManifest.xml file
         <uses-permission android:name="android.permission.INTERNET" />
         <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+        <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
         <uses-permission android:name="android.permission.CAMERA" />
         <uses-feature android:name="android.hardware.camera" />

@@ -33,6 +33,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
       widget.camera,
       // Define the resolution to use.
       ResolutionPreset.max,
+      enableAudio: false,
     );
 
     // Next, initialize the controller. This returns a Future.
@@ -115,7 +116,8 @@ class DisplayPictureScreen extends StatelessWidget {
 
   sendImageToServer(imagePath) async {
     UploadData request = UploadData();
-    bool sent = await request.sendDataToServer(imagePath, '/uploadImage');
+    bool sent = await request.sendImageDataToServer(
+        imagePath, '/api/survey/uploadImage');
     if (sent) {
       print(request.getResponse());
     } else {
@@ -167,7 +169,7 @@ class DisplayPictureScreen extends StatelessWidget {
                   onPressed: () {
                     if (imagePath != null) {
                       setImagepath(imagePath);
-                      sendImageToServer(imagePath);
+                      //sendImageToServer(imagePath);
                     }
                     //Go back to take picture screen
                     Navigator.pop(context);
