@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 import 'dart:io';
 
@@ -23,7 +25,7 @@ class UploadData {
     return this.response;
   }
 
-  Future<bool> sendDataToServer(imagePath, url) async {
+  Future<bool> sendImageDataToServer(imagePath, url) async {
     bool flag = true;
     //create multipart request for POST or PATCH method
     var request = http.MultipartRequest("POST", Uri.parse(SERVER_URL + url));
