@@ -5,6 +5,7 @@ class NewCard extends StatefulWidget {
   final String ques, imgurl;
   final List<String> ans;
   final index;
+
   final Function onAnswerChanged;
 
   NewCard(this.index, this.onAnswerChanged, this.ques, this.imgurl, this.ans);
@@ -50,7 +51,6 @@ class _NewCardState extends State<NewCard> {
   List<Widget> createRadioListOptions(
       List<String> options, Function onAnswerChanged, int index) {
     List<Widget> widgets = [];
-
     for (String option in options) {
       widgets.add(RadioListTile(
         value: option,

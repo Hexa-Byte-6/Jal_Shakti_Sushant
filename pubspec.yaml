@@ -63,6 +63,7 @@ flutter:
   assets:
     - assets/images/crack.jpg
     - assets/images/surveybg.jpg
+    - assets/images/hindiTOenglish.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
@@ -87,6 +88,15 @@ flutter:
   #       - asset: fonts/TrajanPro.ttf
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
+  fonts:
+    - family: MeriendaOne
+      fonts:
+        - asset: assets/fonts/MeriendaOne-Regular.ttf
+          weight: 600
+    - family: Gotu
+      fonts:
+        - asset: assets/fonts/Gotu-Regular.ttf  
+          weight: 600
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

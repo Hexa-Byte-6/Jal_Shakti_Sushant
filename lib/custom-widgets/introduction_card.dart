@@ -15,7 +15,7 @@ class IntroductionCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(15),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.all(20.0),
           child: Text(
               'What is this about?\n We intend to collect data regarding river embankments.\nSome more content here.\nThen convince the users to use this app'),
         ),

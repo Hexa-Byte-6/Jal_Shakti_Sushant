@@ -4,7 +4,6 @@ import 'package:jal_shakti_sush/custom-widgets/admin_login/admin_login_modal.dar
 import 'package:jal_shakti_sush/custom-widgets/embankment_status_card.dart';
 import 'package:jal_shakti_sush/custom-widgets/permission_card.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:overlay_container/overlay_container.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'package:jal_shakti_sush/classes/localization/localization.dart';
@@ -60,42 +59,101 @@ class _JalShaktiHomeState extends State<JalShaktiHome> {
     }
   }
 
+  void _updateLocale(String lang, String country) async {
+    print(lang + ':' + country);
+
+    var prefs = await SharedPreferences.getInstance();
+    prefs.setString('languageCode', lang);
+    prefs.setString('countryCode', country);
+
+    MyApp.setLocale(context, Locale(lang, country));
+  }
+
+  Widget _homeAppBar(BuildContext context) {
+    return Container(
+      height: 50,
+      width: MediaQuery.of(context).size.width,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Expanded(
+            flex: 2,
+            child: user == "admin"
+                ? IconButton(
+                    icon: Icon(
+                      Icons.menu,
+                      color: Colors.white,
+                      size: 30,
+                    ),
+                    onPressed: () {
+                      _scaffoldKey.currentState.openDrawer();
+                    },
+                  )
+                : Container(),
+          ),
+          Expanded(
+            flex: 7,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  AppLocalizations.of(context).appName,
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 30,
+                      fontFamily: locale == 'en' ? 'MeriendaOne' : 'Gotu'),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: IconButton(
+              icon: ImageIcon(
+                AssetImage('assets/images/hindiTOenglish.png'),
+                color: locale == 'en' ? Colors.white : Colors.yellowAccent,
+              ),
+              //  Icon(
+              //   Icons.translate,
+
+              //   color: locale == 'en' ? Colors.white : Colors.yellowAccent,
+              // ),
+              tooltip: "Change language",
+              onPressed: () {
+                //change lauguage
+                setState(() {
+                  locale == 'en' ? locale = 'hi' : locale = 'en';
+                  _updateLocale(locale, '');
+                });
+              },
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: IconButton(
+              icon: Icon(
+                Icons.help_outline,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return MoreInfo();
+                }));
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: GestureDetector(
-        onTap: () {
-          print("Clicked outside overlay container");
-          if (languageMenuShown) {
-            setState(() {
-              languageMenuShown = !languageMenuShown;
-            });
-          }
-        },
+      child: SafeArea(
         child: Scaffold(
           key: _scaffoldKey,
           drawer: user == "admin" ? AdminDrawer() : null,
-          // appBar: AppBar(
-          //   title: Text(AppLocalizations.of(context).appName),
-          //   actions: <Widget>[
-          //     IconButton(
-          //         icon: Icon(Icons.translate),
-          //         onPressed: () {
-          //           //change lauguage
-          //           setState(() {
-          //             languageMenuShown = !languageMenuShown;
-          //           });
-          //         }),
-          //     IconButton(
-          //         icon: Icon(Icons.help_outline),
-          //         onPressed: () {
-          //           Navigator.push(context,
-          //               MaterialPageRoute(builder: (context) {
-          //             return MoreInfo();
-          //           }));
-          //         }),
-          //   ],
-          // ),
           body: Stack(
             children: <Widget>[
               Container(
@@ -106,7 +164,7 @@ class _JalShaktiHomeState extends State<JalShaktiHome> {
                     colors: [
                       Color(0xff14235e),
                       Color(0xffc68ebd),
-                      Color(0xffffd3be)
+                      Color(0xffffd3be),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -114,31 +172,53 @@ class _JalShaktiHomeState extends State<JalShaktiHome> {
                 ),
                 child: Stack(
                   children: <Widget>[
-                    Column(
-                      children: <Widget>[
-                        //home app bar
-                        _homeAppBar(context),
-                        //_buildLanguageWidget(),
-                        Center(
-                          child: IntroductionCard(),
-                        ),
-                        !permissions
-                            ? PermissionRequestCard(getPermissions)
-                            : Visibility(
-                                child: Text(""),
-                                visible: false,
+                    SingleChildScrollView(
+                      child: Column(
+                        children: <Widget>[
+                          //home app bar
+                          _homeAppBar(context),
+                          Center(
+                            child: IntroductionCard(),
+                          ),
+                          !permissions
+                              ? PermissionRequestCard(getPermissions)
+                              : Visibility(
+                                  child: Text(""),
+                                  visible: false,
+                                ),
+                          EmbankmentStatusCard(),
+                          Container(
+                            height: 45,
+                            width: 100,
+                            margin: EdgeInsets.only(
+                              top: 20,
+                              bottom: 20,
+                            ),
+                            child: RaisedButton(
+                              child: Text(
+                                AppLocalizations.of(context).startSurvey,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
                               ),
-                        EmbankmentStatusCard(),
-                        RaisedButton(
-                          child: Text(AppLocalizations.of(context).startSurvey),
-                          onPressed: () {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) {
-                              return Surveypage("no-image");
-                            }));
-                          },
-                        ),
-                      ],
+                              elevation: 5,
+                              color: myBlue,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              onPressed: () {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return Surveypage("no-image");
+                                }));
+                              },
+                            ),
+                          ),
+                          SizedBox(
+                            height: 100,
+                          ),
+                        ],
+                      ),
                     ),
                     user == "admin" ? Container() : AdminLoginModal(),
                   ],
@@ -149,83 +229,6 @@ class _JalShaktiHomeState extends State<JalShaktiHome> {
         ),
       ),
     );
-  }
-
-  Widget _homeAppBar(BuildContext context) {
-    return Positioned(
-        top: 0,
-        left: 0,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Expanded(
-              flex: 2,
-              child: user == "admin"
-                  ? IconButton(
-                      icon: Icon(
-                        Icons.menu,
-                        color: Colors.white,
-                      ),
-                      onPressed: () {
-                        _scaffoldKey.currentState.openDrawer();
-                      },
-                    )
-                  : Container(),
-            ),
-            Expanded(
-              flex: 7,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    AppLocalizations.of(context).appName,
-                    style: TextStyle(color: Colors.white, fontSize: 30),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              flex: 2,
-              child: IconButton(
-                icon: Icon(
-                  Icons.translate,
-                  color: Colors.white,
-                ),
-                onPressed: () {
-                  //change lauguage
-                  setState(() {
-                    locale == 'en' ? locale = 'hi' : locale = 'en';
-                    _updateLocale(locale, '');
-                  });
-                },
-              ),
-            ),
-            Expanded(
-              flex: 2,
-              child: IconButton(
-                icon: Icon(
-                  Icons.help_outline,
-                  color: Colors.white,
-                ),
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return MoreInfo();
-                  }));
-                },
-              ),
-            ),
-          ],
-        ));
-  }
-
-  void _updateLocale(String lang, String country) async {
-    print(lang + ':' + country);
-
-    var prefs = await SharedPreferences.getInstance();
-    prefs.setString('languageCode', lang);
-    prefs.setString('countryCode', country);
-
-    MyApp.setLocale(context, Locale(lang, country));
   }
 }
 // Widget _buildLanguageWidget() {

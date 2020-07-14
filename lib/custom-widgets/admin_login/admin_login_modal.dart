@@ -4,11 +4,12 @@ import 'dart:ui';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:jal_shakti_sush/classes/Constants.dart';
 import 'package:jal_shakti_sush/custom-widgets/admin_login/rounded_password_field.dart';
 import 'package:jal_shakti_sush/screens/jal_shakti_home.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-
 import 'package:jal_shakti_sush/custom-widgets/admin_login/rounded_button.dart';
 import 'package:jal_shakti_sush/custom-widgets/admin_login/rounded_input_field.dart';
 
@@ -24,7 +25,7 @@ class _AdminLoginModalState extends State<AdminLoginModal> {
       backdropEnabled: true,
       backdropColor: Colors.blue,
       minHeight: 40,
-      maxHeight: MediaQuery.of(context).size.height - 25,
+      maxHeight: MediaQuery.of(context).size.height * 0.9,
       borderRadius: BorderRadius.only(
         topLeft: Radius.circular(20),
         topRight: Radius.circular(20),
@@ -114,6 +115,11 @@ class _LoginLayoutState extends State<LoginLayout> {
     return true;
   }
 
+  void setLoginStatus() async {
+    var prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isLoggedIn', true);
+  }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -155,6 +161,7 @@ class _LoginLayoutState extends State<LoginLayout> {
 
                   Scaffold.of(context).showSnackBar(_snackBar);
                   if (login) {
+                    setLoginStatus();
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(

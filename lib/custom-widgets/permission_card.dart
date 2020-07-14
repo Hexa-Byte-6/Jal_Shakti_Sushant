@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jal_shakti_sush/classes/Constants.dart';
 
 class PermissionRequestCard extends StatelessWidget {
   final Function getPermissions;
@@ -8,16 +9,25 @@ class PermissionRequestCard extends StatelessWidget {
     return Container(
       width: MediaQuery.of(context).size.width * 0.9,
       alignment: Alignment.center,
+      margin: EdgeInsets.only(
+        bottom: 10,
+      ),
       child: Card(
         elevation: 5,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
         child: Column(
           children: <Widget>[
             Container(
               alignment: Alignment.center,
               width: double.infinity,
               decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
+                  color: Colors.blue,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(15),
+                    topRight: Radius.circular(15),
+                  )),
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: RichText(
@@ -65,8 +75,11 @@ class PermissionRequestCard extends StatelessWidget {
                   "Allow",
                   style: TextStyle(color: Colors.white),
                 ),
-                color: Colors.blue[300],
                 elevation: 5,
+                color: myBlue,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
             ),
           ],
