@@ -11,7 +11,7 @@ import 'package:jal_shakti_sush/screens/survey_page.dart';
 class AdminDrawer extends StatelessWidget {
   final TextStyle drawerTextStyle = TextStyle(
     color: Colors.white,
-    fontSize: 20,
+    fontSize: 18,
   );
   final Color drawerIconColor = Colors.white;
 

@@ -61,6 +61,7 @@ class LoginLayout extends StatefulWidget {
 
 class _LoginLayoutState extends State<LoginLayout> {
   String _username = "";
+  String user = "";
   String _password = "";
   final String url = SERVER_URL;
   SnackBar _snackBar;
@@ -85,6 +86,11 @@ class _LoginLayoutState extends State<LoginLayout> {
           _snackBar = SnackBar(content: Text(jsonResponse['message']));
           if (jsonResponse['status'] == 1) {
             flag = true;
+            //user = jsonResponse['full-name'];
+            var prefs = await SharedPreferences.getInstance();
+            prefs.setString('user', jsonResponse['full-name']);
+            prefs.setString('state', jsonResponse['state']);
+            prefs.setString('district', jsonResponse['district']);
           }
         } else {
           _snackBar = SnackBar(content: Text("Some error occured.."));

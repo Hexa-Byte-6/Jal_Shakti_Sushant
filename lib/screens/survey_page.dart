@@ -5,6 +5,7 @@ import 'package:camera/camera.dart';
 import 'dart:io';
 import 'package:jal_shakti_sush/classes/Constants.dart';
 import 'package:jal_shakti_sush/classes/location_accessor.dart';
+import 'package:jal_shakti_sush/classes/upload_data.dart';
 import 'package:jal_shakti_sush/screens/survey/receive_questionanswer.dart';
 
 import '../screens/camera_screen.dart';
@@ -68,6 +69,17 @@ class _SurveypageState extends State<Surveypage>
     });
     this._image = imagePath;
     print("Image path(survey page): " + this._image);
+  }
+
+  sendImageToServer(imagePath) async {
+    UploadData request = UploadData();
+    bool sent = await request.sendImageDataToServer(
+        imagePath, '/api/survey/uploadImage');
+    if (sent) {
+      print(request.getResponse());
+    } else {
+      print(request.getErrorResponse());
+    }
   }
 
   fetchLocation() async {
@@ -521,6 +533,7 @@ class _SurveypageState extends State<Surveypage>
                           borderRadius: BorderRadius.circular(10),
                         ),
                         onPressed: () {
+                          sendImageToServer(_image);
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) {
                             return ReceiveQuestionAnswer();

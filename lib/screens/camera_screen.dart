@@ -120,17 +120,6 @@ class DisplayPictureScreen extends StatelessWidget {
   const DisplayPictureScreen({Key key, this.imagePath, this.setImagepath})
       : super(key: key);
 
-  sendImageToServer(imagePath) async {
-    UploadData request = UploadData();
-    bool sent = await request.sendImageDataToServer(
-        imagePath, '/api/survey/uploadImage');
-    if (sent) {
-      print(request.getResponse());
-    } else {
-      print(request.getErrorResponse());
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     MediaQueryData mediaQueryData = MediaQuery.of(context);
@@ -194,7 +183,6 @@ class DisplayPictureScreen extends StatelessWidget {
                       onPressed: () {
                         if (imagePath != null) {
                           setImagepath(imagePath);
-                          //sendImageToServer(imagePath);
                         }
                         //Go back to take picture screen
                         Navigator.pop(context);
