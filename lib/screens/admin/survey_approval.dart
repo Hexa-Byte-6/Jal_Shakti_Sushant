@@ -1,14 +1,77 @@
-import 'package:flutter/material.dart';
-import 'package:jal_shakti_sush/classes/localization/localization.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 
+import 'package:flutter/material.dart';
+import 'package:jal_shakti_sush/classes/Constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+
+import 'package:jal_shakti_sush/classes/localization/localization.dart';
 import 'package:jal_shakti_sush/classes/survey_approval_data.dart';
 import 'package:jal_shakti_sush/screens/admin/survey_approval_help.dart';
 import 'package:jal_shakti_sush/screens/admin/survey_details.dart';
 
-class SurveyApprovalScreen extends StatelessWidget {
-  final surveys = PendingSurveys.surveys;
+class SurveyApprovalScreen extends StatefulWidget {
+  //final surveys = PendingSurveys.surveys;
+  @override
+  _SurveyApprovalScreenState createState() => _SurveyApprovalScreenState();
+}
 
-//The build method
+class _SurveyApprovalScreenState extends State<SurveyApprovalScreen> {
+  bool surveysAvailable = false;
+  bool isLoading = true;
+
+  var surveys;
+
+  @override
+  void initState() {
+    getSurveyDetails();
+    super.initState();
+  }
+
+  Future<void> getSurveyDetails() async {
+    var prefs = await SharedPreferences.getInstance();
+    var jsonResponse;
+    var region = {
+      "state": prefs.getString('state'),
+      "district": prefs.getString('district')
+    };
+    try {
+      var response = await http.post(SERVER_URL + '/api/getSurveys',
+          headers: <String, String>{
+            'Content-Type': 'application/json;charset=UTF-8'
+          },
+          body: jsonEncode(region));
+      if (response.statusCode == 200) {
+        //data has been received...
+        jsonResponse = jsonDecode(response.body);
+        if (jsonResponse['status'] == 0) {
+          print("Message:${jsonResponse['message']}");
+          Timer(Duration(milliseconds: 2000), () {
+            setState(() {
+              isLoading = false;
+              surveysAvailable = false;
+            });
+          });
+        } else {
+          print(jsonResponse['message']);
+          surveys = jsonResponse['message'];
+          Timer(Duration(milliseconds: 2000), () {
+            setState(() {
+              isLoading = false;
+              surveysAvailable = true;
+            });
+          });
+        }
+      } else {
+        //some other error
+        print('Some error here...');
+        print(response.statusCode);
+      }
+    } on TimeoutException catch (e) {} on SocketException catch (e) {} on Error catch (e) {}
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,31 +87,42 @@ class SurveyApprovalScreen extends StatelessWidget {
               }),
         ],
       ),
-      body: Container(
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Expanded(
-              child: ListView.builder(
-                  itemCount: surveys.length,
-                  itemBuilder: (context, index) {
-                    return SurveyDescriptionCard(
-                        surveys[index]["user-name"],
-                        surveys[index]["survey-date"],
-                        surveys[index]["status"]);
-                  }),
+      body: !surveysAvailable
+          ? Column(
+              children: <Widget>[
+                !isLoading ? Text("No surveys available...") : Container(),
+                isLoading ? CircularProgressIndicator() : Container(),
+              ],
             )
-          ],
-        ),
-      ),
+          : Container(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Expanded(
+                    child: ListView.builder(
+                        itemCount: surveys.length,
+                        itemBuilder: (context, index) {
+                          return SurveyDescriptionCard(
+                              surveys[index]["surveyer"],
+                              surveys[index]["time-stamp"],
+                              surveys[index]["survey-status"],
+                              surveys[index]["image-url"],
+                              surveys[index]["location"]);
+                        }),
+                  )
+                ],
+              ),
+            ),
     );
   }
 }
 
 class SurveyDescriptionCard extends StatelessWidget {
-  final String user, date, status;
-  SurveyDescriptionCard(this.user, this.date, this.status);
+  final String user, date, status, imageUrl;
+  final location;
+  SurveyDescriptionCard(
+      this.user, this.date, this.status, this.imageUrl, this.location);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -57,7 +131,7 @@ class SurveyDescriptionCard extends StatelessWidget {
       width: double.maxFinite,
       child: Card(
         elevation: 5,
-        shadowColor: this.status == "pending"
+        shadowColor: this.status == "Pending"
             ? Colors.redAccent
             : Colors.lightGreenAccent,
         child: Container(
@@ -65,7 +139,7 @@ class SurveyDescriptionCard extends StatelessWidget {
             border: Border(
               left: BorderSide(
                   width: 4,
-                  color: status == "pending" ? Colors.redAccent : Colors.green),
+                  color: status == "Pending" ? Colors.redAccent : Colors.green),
             ),
           ),
           child: Column(
@@ -78,7 +152,7 @@ class SurveyDescriptionCard extends StatelessWidget {
                   ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(0, 10, 10, 0),
-                    child: status == "pending"
+                    child: status == "Pending"
                         ? Icon(
                             Icons.error_outline,
                             color: Colors.orange,
@@ -105,13 +179,17 @@ class SurveyDescriptionCard extends StatelessWidget {
                 alignment: Alignment.bottomRight,
                 child: Padding(
                   padding: const EdgeInsets.only(right: 10),
-                  child: status == "pending"
+                  child: status == "Pending"
                       ? GestureDetector(
                           onTap: () {
                             //go to survey details screen
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (context) {
-                              return SurveyDetails(user: user, date: date);
+                              return SurveyDetails(
+                                  user: user,
+                                  date: date,
+                                  imageUrl: imageUrl,
+                                  location: location);
                             }));
                           },
                           child: Row(

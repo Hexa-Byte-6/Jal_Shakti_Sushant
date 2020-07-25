@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-class NewCard extends StatefulWidget {
-  final String ques, imgurl;
-  final ans;
-  final index;
-
+class GeneralCard extends StatefulWidget {
+  final String ques;
+  final List<String> ans;
+  final int index;
   final Function onAnswerChanged;
 
-  NewCard(this.index, this.onAnswerChanged, this.ques, this.imgurl, this.ans);
+  GeneralCard(this.index, this.onAnswerChanged, this.ques, this.ans);
 
   @override
-  _NewCardState createState() => _NewCardState();
+  _GeneralCardState createState() => _GeneralCardState();
 }
 
-class _NewCardState extends State<NewCard> {
+class _GeneralCardState extends State<GeneralCard> {
   String selectedOption;
 
   @override
@@ -30,7 +29,7 @@ class _NewCardState extends State<NewCard> {
           ),
           Column(
             children: <Widget>[
-              Image.asset(widget.imgurl),
+              //Image.asset(widget.imgurl),
               Column(
                 children: createRadioListOptions(
                     widget.ans, widget.onAnswerChanged, widget.index),
@@ -51,6 +50,7 @@ class _NewCardState extends State<NewCard> {
   List<Widget> createRadioListOptions(
       List<String> options, Function onAnswerChanged, int index) {
     List<Widget> widgets = [];
+
     for (String option in options) {
       widgets.add(RadioListTile(
         value: option,

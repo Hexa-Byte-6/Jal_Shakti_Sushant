@@ -34,12 +34,13 @@ class AppLocalizations {
 
       //for survey details page
       'surveyer': 'Survey from',
+
       'survey_approval_warning':
           'Before approving the survey data, ensure that it is correct and relevant to river embankments as per your knowledge',
       'deny': 'Deny',
       'approve': 'Approve',
       'see_on_map': 'See on map',
-      'location': 'Location',
+      'image_location': 'Image Location',
     },
     'hi': {
       //for home page

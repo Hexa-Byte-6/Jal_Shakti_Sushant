@@ -1,25 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:jal_shakti_sush/classes/localization/localization.dart';
 import 'dart:io';
-
-import 'package:jal_shakti_sush/screens/fullscreen_image.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'package:jal_shakti_sush/classes/localization/localization.dart';
+import 'package:jal_shakti_sush/screens/fullscreen_image.dart';
 
 class SurveyDetails extends StatelessWidget {
   final String user, date;
-  //final imageUrl = "https://picsum.photos/250?image=9";
-  final imageUrl =
+  var url =
       "https://images.unsplash.com/photo-1497250681960-ef046c08a56e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60";
 
-  final String lat = "18.9966445";
-  final String long = "73.9458459";
-  // final String lat = "18.9687697";
-  // final String long = "73.9454965";
+  final imageUrl;
+  final location;
 
-  SurveyDetails({
-    this.user,
-    this.date,
-  });
+  SurveyDetails({this.user, this.date, this.imageUrl, this.location});
 
   _showConfirmationDialogBox(BuildContext context) {
     showDialog(
@@ -93,14 +87,15 @@ class SurveyDetails extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(10, 30, 10, 30),
               child: GestureDetector(
                 onTap: () {
+                  debugPrint("Image:$imageUrl");
                   Navigator.push(context, MaterialPageRoute(builder: (_) {
-                    return FullScreenImage(imageUrl: imageUrl);
+                    return FullScreenImage(imageUrl: url);
                   }));
                 },
                 child: Hero(
                   tag: "fullImage",
                   child: Image.network(
-                    imageUrl,
+                    url,
                     loadingBuilder: (BuildContext context, Widget child,
                         ImageChunkEvent loadingProgress) {
                       if (loadingProgress == null) return child;
@@ -154,7 +149,7 @@ class SurveyDetails extends StatelessWidget {
                           bottom: 10,
                         ),
                         child: Text(
-                          "$lat,$long",
+                          "${location['latitude']},${location['longitude']}",
                           style: TextStyle(color: Colors.lightBlueAccent),
                         ),
                       ),
@@ -174,10 +169,10 @@ class SurveyDetails extends StatelessWidget {
                     ),
                     onPressed: () async {
                       final String googleMapsUrl =
-                          "https://www.google.com/maps/search/?api=1&query=$lat,$long";
+                          "https://www.google.com/maps/search/?api=1&query=${location['latitude']},${location['longitude']}";
 
                       final String appleMapsUrl =
-                          "https://maps.apple.com/?q=$lat,$long";
+                          "https://maps.apple.com/?q=${location['latitude']},${location['longitude']}";
 
                       if (Platform.isAndroid) {
                         if (await canLaunch(googleMapsUrl)) {

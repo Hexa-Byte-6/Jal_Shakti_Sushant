@@ -8,13 +8,14 @@ class ReceiveQuestionAnswer extends StatefulWidget {
 }
 
 class _ReceiveQuestionAnswerState extends State<ReceiveQuestionAnswer> {
-  final questionanswer = QuestionAnswer.questionanswer;
+  final questionanswer = QuestionAnswer.generalQuestions;
   Map<String, String> surveyData =
       {}; //contains the questions number and corresponding answer
   var selectedOption = '';
   @override
   void initState() {
     super.initState();
+    print(questionanswer);
     for (int i = 0; i < questionanswer.length; i++) {
       surveyData[i.toString()] = '';
     }

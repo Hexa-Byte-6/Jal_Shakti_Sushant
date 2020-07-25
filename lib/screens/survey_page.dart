@@ -1,14 +1,19 @@
 import 'dart:async';
-
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'dart:io';
+import 'package:http/http.dart' as http;
+
 import 'package:jal_shakti_sush/classes/Constants.dart';
 import 'package:jal_shakti_sush/classes/location_accessor.dart';
 import 'package:jal_shakti_sush/classes/upload_data.dart';
 import 'package:jal_shakti_sush/screens/survey/receive_questionanswer.dart';
-
 import '../screens/camera_screen.dart';
+import './survey/question_answer_data.dart';
+import 'package:jal_shakti_sush/classes/survey_data_store.dart';
+import 'package:jal_shakti_sush/screens/survey/before_general_question_screen.dart';
 
 CameraDescription firstCamera;
 
@@ -22,6 +27,35 @@ Future initialize() async {
 
   // Get a specific camera from the list of available cameras.
   firstCamera = cameras.first;
+
+  //fetch surveyQuestions from server...
+  var prefs = await SharedPreferences.getInstance();
+  String lang = prefs.getString('languageCode');
+  var jsonResponse;
+  try {
+    var response = await http.post(SERVER_URL + '/api/getSurveyQuestions',
+        headers: <String, String>{
+          'Content-Type': 'application/json;charset=UTF-8'
+        },
+        body: jsonEncode({"language": lang}));
+
+    if (response.statusCode == 200) {
+      jsonResponse = jsonDecode(response.body);
+      print(jsonResponse['message']);
+      QuestionAnswer.generalQuestions =
+          jsonResponse['questions']['generalSurveyQuestions'];
+      QuestionAnswer.detailedQuestions =
+          jsonResponse['questions']['detailedSurveyQuestions'];
+    } else {
+      print(response.statusCode);
+    }
+  } on TimeoutException catch (e) {
+    print("Timeout exception...");
+  } on SocketException catch (e) {
+    print("Socket exception...");
+  } on Exception catch (e) {
+    print("Some error occurred....");
+  }
 }
 
 class Surveypage extends StatefulWidget {
@@ -77,6 +111,7 @@ class _SurveypageState extends State<Surveypage>
         imagePath, '/api/survey/uploadImage');
     if (sent) {
       print(request.getResponse());
+      SurveyDataStore.imageURL = request.getResponse();
     } else {
       print(request.getErrorResponse());
     }
@@ -92,6 +127,8 @@ class _SurveypageState extends State<Surveypage>
           _location["latitude"] = loc.getLatitude();
           _location["longitude"] = loc.getLongitude();
           print("Location : $_location");
+          SurveyDataStore.latitude = loc.getLatitude();
+          SurveyDataStore.longitude = loc.getLongitude();
           _currentAddress = address;
           _locationFetched = true;
           print("Address:$_currentAddress");
@@ -536,7 +573,7 @@ class _SurveypageState extends State<Surveypage>
                           sendImageToServer(_image);
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) {
-                            return ReceiveQuestionAnswer();
+                            return BeforeGeneralQuestionScreen();
                           }));
                         }),
                   ),
