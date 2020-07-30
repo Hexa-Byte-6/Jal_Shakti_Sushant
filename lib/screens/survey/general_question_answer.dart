@@ -62,7 +62,7 @@ class _ReceiveGeneralQuestionAnswerState
                     onAnswerChanged,
                     generalquestionanswer[i]["question"],
                     //generalquestionanswer[i]["imgurl"],
-                    List<String>.from(generalquestionanswer[i]['answers'])),
+                    List<dynamic>.from(generalquestionanswer[i]['answers'])),
               Container(
                 child: RaisedButton(
                     child: Text("Next"),
@@ -81,7 +81,6 @@ class _ReceiveGeneralQuestionAnswerState
                       } else {
                         final snackbar = SnackBar(
                             content: Text("Please fill all the fields"));
-                        Scaffold.of(context).showSnackBar(snackbar);
                       }
                     }),
               ),

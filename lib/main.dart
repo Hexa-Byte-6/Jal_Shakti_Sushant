@@ -9,9 +9,15 @@ import 'package:jal_shakti_sush/screens/jal_shakti_home.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  var status = prefs.getBool('isLoggedIn');
-  print("Status:$status");
+  var status = false;
+  try {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    status = prefs.getBool('isLoggedIn');
+    print("Status:$status");
+  } on Error catch (e) {
+    print("Error in main.dart: : $e");
+  }
+  if (status == null) status = false;
   runApp(MyApp(status));
 }
 

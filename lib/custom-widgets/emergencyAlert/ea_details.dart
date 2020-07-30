@@ -55,7 +55,11 @@ class _EAContentState extends State<EAContent> {
   Future<bool> sendAdvisoryReportToServer(var data) async {
     var prefs = await SharedPreferences.getInstance();
     String user = prefs.getString("user");
+    var place = widget.getRegionData();
     var dataToSend = {
+      "state": place['state'],
+      "district": place['district'],
+      "region": place['region'],
       "reporter": user,
       "report-type": "advisory",
       "data": data

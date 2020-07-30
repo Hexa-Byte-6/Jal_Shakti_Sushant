@@ -60,7 +60,15 @@ class _EWContentState extends State<EWContent> {
   Future<bool> sendWarningReportToServer(var data) async {
     var prefs = await SharedPreferences.getInstance();
     String user = prefs.getString("user");
-    var dataToSend = {"reporter": user, "report-type": "warning", "data": data};
+    var place = widget.getRegionData();
+    var dataToSend = {
+      "state": place['state'],
+      "district": place['district'],
+      "region": place['region'],
+      "reporter": user,
+      "report-type": "warning",
+      "data": data
+    };
     print("Sending data to server...\n$dataToSend");
     bool flag = false;
     String message;

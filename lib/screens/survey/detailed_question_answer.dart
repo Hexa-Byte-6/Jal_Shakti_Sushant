@@ -82,7 +82,7 @@ class _ReceiveDetailedQuestionAnswerState
                   onAnswerChanged,
                   detailedquestionanswer[i]["question"],
                   detailedquestionanswer[i]["imgurl"],
-                  List<String>.from(detailedquestionanswer[i]["answers"]),
+                  List<dynamic>.from(detailedquestionanswer[i]["answers"]),
                 )
               else if (detailedquestionanswer[i]["type"] ==
                   "multiple-choice-image")
@@ -91,7 +91,7 @@ class _ReceiveDetailedQuestionAnswerState
                   onAnswerChanged,
                   detailedquestionanswer[i]["question"],
                   detailedquestionanswer[i]["imgurl"],
-                  List<String>.from(detailedquestionanswer[i]["answers"]),
+                  List<dynamic>.from(detailedquestionanswer[i]["answers"]),
                 )
               else if (detailedquestionanswer[i]["type"] == "image-choice")
                 ImageChoiceCard(

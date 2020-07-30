@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:intl/intl.dart';
 import 'package:jal_shakti_sush/classes/Constants.dart';
 
 import 'state_district_data.dart';
@@ -155,88 +156,96 @@ class UserDetailScreenState extends State<UserDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomPadding: false,
-      body: Padding(
-        padding: new EdgeInsets.all(25.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              "Now a few last steps to help us understand and categorize the survey data. Please fill in the details below",
-              style: TextStyle(fontSize: 16),
-            ),
-            Form(
-              key: _formKey,
-              child: Column(
-                children: <Widget>[
-                  _buildName(),
-                  SizedBox(height: 10),
-                  _buildDropdown(),
-                  SizedBox(height: 20),
-                  RaisedButton(
-                    child: Text(
-                      'Submit',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    color: Colors.blue,
-                    onPressed: () {
-                      if (!_formKey.currentState.validate()) {
-                        return;
-                      }
-
-                      _formKey.currentState.save();
-
-                      print("Name  : " + _name);
-                      print("State  : " + _savedstate);
-                      print("District :  " + _saveddistrict);
-
-                      var location = {
-                        "latitude": SurveyDataStore.latitude.toString(),
-                        "longitude": SurveyDataStore.longitude.toString()
-                      };
-                      var imageURL = SurveyDataStore.imageURL;
-
-                      var dataToSend = {
-                        "surveyer": _name,
-                        "state": _savedstate,
-                        "district": _saveddistrict,
-                        "image-url": imageURL,
-                        "location": location,
-                        "survey-status": "Pending",
-                        "survey-data": widget.gen2
-                      };
-                      // print(
-                      //     "User Data .................................................");
-                      // print(userdata);
-
-                      // print(
-                      //     "Question answer data.................................");
-                      // print(widget.gen2);
-                      // Map storeddata = {
-                      //   "userdata": userdata,
-                      //   "question_answer": widget.gen2
-                      // };
-                      print(
-                          "Send the data to server................................................");
-                      try {
-                        //SurveyData d = SurveyData.fromJson(dataToSend);
-                        //print("\nSurvey Data...\n$d\n");
-                        //print(surveyDataToJson(d));
-
-                        sendSurveyDataToServer(dataToSend);
-                      } on Exception catch (e) {
-                        print("Exception:::::---$e");
-                      } on Error catch (e) {
-                        print("Error:::::---$e");
-                        debugPrintStack();
-                      }
-                      //Send the data to server
-                    },
-                  )
-                ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: new EdgeInsets.all(25.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                "Now a few last steps to help us understand and categorize the survey data. Please fill in the details below",
+                style: TextStyle(fontSize: 16),
               ),
-            ),
-          ],
+              Form(
+                key: _formKey,
+                child: Column(
+                  children: <Widget>[
+                    _buildName(),
+                    SizedBox(height: 10),
+                    _buildDropdown(),
+                    SizedBox(height: 20),
+                    RaisedButton(
+                      child: Text(
+                        'Submit',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      color: Colors.blue,
+                      onPressed: () {
+                        if (!_formKey.currentState.validate()) {
+                          return;
+                        }
+
+                        _formKey.currentState.save();
+
+                        print("Name  : " + _name);
+                        print("State  : " + _savedstate);
+                        print("District :  " + _saveddistrict);
+
+                        var location = {
+                          "latitude": SurveyDataStore.latitude.toString(),
+                          "longitude": SurveyDataStore.longitude.toString()
+                        };
+                        var imageURL = SurveyDataStore.imageURL;
+                        var now = new DateTime.now();
+                        var dateTime =
+                            DateFormat("dd-MM-yyyy-hh:mm:ss").format(now);
+                        var surveyId = dateTime + _name;
+                        var dataToSend = {
+                          "surveyId": surveyId,
+                          "surveyer": _name,
+                          "state": _savedstate,
+                          "district": _saveddistrict,
+                          "image-url": imageURL,
+                          "zone_id": "",
+                          "date-time": dateTime.toString(),
+                          "location": location,
+                          "survey-status": "Pending",
+                          "survey-data": widget.gen2
+                        };
+                        // print(
+                        //     "User Data .................................................");
+                        // print(userdata);
+
+                        // print(
+                        //     "Question answer data.................................");
+                        // print(widget.gen2);
+                        // Map storeddata = {
+                        //   "userdata": userdata,
+                        //   "question_answer": widget.gen2
+                        // };
+                        print(
+                            "Send the data to server................................................");
+                        try {
+                          //SurveyData d = SurveyData.fromJson(dataToSend);
+                          //print("\nSurvey Data...\n$d\n");
+                          //print(surveyDataToJson(d));
+
+                          sendSurveyDataToServer(dataToSend);
+                        } on Exception catch (e) {
+                          print("Exception:::::---$e");
+                        } on Error catch (e) {
+                          print("Error:::::---$e");
+                          debugPrintStack();
+                        }
+                        //Send the data to server
+                      },
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -39,6 +39,7 @@ dependencies:
     sdk: flutter
   overlay_container:
   sliding_up_panel:
+  intl: 
   
 
   #Below package is only used to preview app on various devices and not for production release

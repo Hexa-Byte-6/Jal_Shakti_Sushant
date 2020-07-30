@@ -228,8 +228,8 @@ class StateDistrict {
     {
       "state": "Gujarat",
       "district": [
-        "Ahmedabad"
-            "Amreli",
+        "Ahmedabad",
+        "Amreli",
         "Anand",
         "Aravalli",
         "Banaskantha",

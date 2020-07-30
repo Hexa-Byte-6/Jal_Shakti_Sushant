@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:jal_shakti_sush/classes/Constants.dart';
 
 //MultipleChoiceCard
 class MultipleChoiceCard extends StatefulWidget {
   final String ques, imgurl;
-  final List<String> ans;
+  final List<dynamic> ans;
   final index;
   final Function onAnswerChanged;
 
@@ -50,14 +51,14 @@ class _MultipleChoiceCardState extends State<MultipleChoiceCard> {
   }
 
   List<Widget> createRadioListOptions(
-      List<String> options, Function onAnswerChanged, int index) {
+      options, Function onAnswerChanged, int index) {
     List<Widget> widgets = [];
 
-    for (String option in options) {
+    for (List option in options) {
       widgets.add(RadioListTile(
-        value: option,
+        value: option[0].toString(),
         groupValue: selectedOption,
-        title: Text(option),
+        title: Text(option[1]),
         onChanged: (currentOption) {
           //print("Current Option: " + currentOption);
           //print("Card index: ");
@@ -65,19 +66,19 @@ class _MultipleChoiceCardState extends State<MultipleChoiceCard> {
           onAnswerChanged(index, currentOption);
           setSelectedOption(currentOption);
         },
-        selected: selectedOption == option,
+        selected: selectedOption == option[0],
       ));
     }
     return widgets;
   }
 }
 
-//*************************************************************************************************************** */
+//****************************************************************************************************************//
 
 //_MultipleChoiceImageCard
 class MultipleChoiceImageCard extends StatefulWidget {
   final String ques, imgurl;
-  final List<String> ans;
+  final List<dynamic> ans;
   final index;
   final Function onAnswerChanged;
 
@@ -105,7 +106,7 @@ class _MultipleChoiceImageCardState extends State<MultipleChoiceImageCard> {
           ),
           Column(
             children: <Widget>[
-              Image.network(widget.imgurl),
+              Image.network(SERVER_URL + widget.imgurl),
               Column(
                 children: createRadioListOptions(
                     widget.ans, widget.onAnswerChanged, widget.index),
@@ -124,31 +125,29 @@ class _MultipleChoiceImageCardState extends State<MultipleChoiceImageCard> {
   }
 
   List<Widget> createRadioListOptions(
-      List<String> options, Function onAnswerChanged, int index) {
+      options, Function onAnswerChanged, int index) {
     List<Widget> widgets = [];
 
-    for (String option in options) {
+    for (List option in options) {
       widgets.add(RadioListTile(
-        value: option,
+        value: option[0].toString(),
         groupValue: selectedOption,
-        title: Text(option),
+        title: Text(option[1]),
         onChanged: (currentOption) {
-          //print("Current Option: " + currentOption);
-          //print("Card index: ");
-          //print(index);
           onAnswerChanged(index, currentOption);
           setSelectedOption(currentOption);
         },
-        selected: selectedOption == option,
+        selected: selectedOption == option[0],
       ));
     }
     return widgets;
   }
 }
 
-//*************************************************************************************************************** */
+//****************************************************************************************************************/
 
 //ImageChoiceCard
+
 class ImageChoiceCard extends StatefulWidget {
   final String ques;
   final List<dynamic> ans;
@@ -203,7 +202,9 @@ class _ImageChoiceCardState extends State<ImageChoiceCard> {
       widgets.add(RadioListTile(
         value: option[0].toString(),
         groupValue: selectedOption,
-        title: Image.network(option[1]),
+        title: option[1] != "null"
+            ? Image.network(SERVER_URL + option[1])
+            : Text(option[2]),
         onChanged: (currentOption) {
           //print("Current Option: " + currentOption);
           //print("Card index: ");

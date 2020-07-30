@@ -50,11 +50,12 @@ Future initialize() async {
       print(response.statusCode);
     }
   } on TimeoutException catch (e) {
-    print("Timeout exception...");
+    print("Timeout exception...(survey page)");
   } on SocketException catch (e) {
-    print("Socket exception...");
+    print("Socket exception...(survey page)");
+    print(e);
   } on Exception catch (e) {
-    print("Some error occurred....");
+    print("Some error occurred....(survey page)");
   }
 }
 

@@ -3,7 +3,7 @@ import 'package:flutter/rendering.dart';
 
 class GeneralCard extends StatefulWidget {
   final String ques;
-  final List<String> ans;
+  final List<dynamic> ans;
   final int index;
   final Function onAnswerChanged;
 
@@ -48,14 +48,14 @@ class _GeneralCardState extends State<GeneralCard> {
   }
 
   List<Widget> createRadioListOptions(
-      List<String> options, Function onAnswerChanged, int index) {
+      options, Function onAnswerChanged, int index) {
     List<Widget> widgets = [];
 
-    for (String option in options) {
+    for (List option in options) {
       widgets.add(RadioListTile(
-        value: option,
+        value: option[0].toString(),
         groupValue: selectedOption,
-        title: Text(option),
+        title: Text(option[1]),
         onChanged: (currentOption) {
           //print("Current Option: " + currentOption);
           //print("Card index: ");
@@ -63,7 +63,7 @@ class _GeneralCardState extends State<GeneralCard> {
           onAnswerChanged(index, currentOption);
           setSelectedOption(currentOption);
         },
-        selected: selectedOption == option,
+        selected: selectedOption == option[0],
       ));
     }
     return widgets;

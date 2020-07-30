@@ -57,11 +57,9 @@ class _SurveyApprovalScreenState extends State<SurveyApprovalScreen> {
         } else {
           print(jsonResponse['message']);
           surveys = jsonResponse['message'];
-          Timer(Duration(milliseconds: 2000), () {
-            setState(() {
-              isLoading = false;
-              surveysAvailable = true;
-            });
+          setState(() {
+            isLoading = false;
+            surveysAvailable = true;
           });
         }
       } else {
@@ -75,54 +73,61 @@ class _SurveyApprovalScreenState extends State<SurveyApprovalScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Approval"),
-        actions: <Widget>[
-          IconButton(
-              icon: Icon(Icons.help_outline),
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return ApprovalHelp();
-                }));
-              }),
-        ],
-      ),
-      body: !surveysAvailable
-          ? Column(
-              children: <Widget>[
-                !isLoading ? Text("No surveys available...") : Container(),
-                isLoading ? CircularProgressIndicator() : Container(),
-              ],
-            )
-          : Container(
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Expanded(
-                    child: ListView.builder(
-                        itemCount: surveys.length,
-                        itemBuilder: (context, index) {
-                          return SurveyDescriptionCard(
-                              surveys[index]["surveyer"],
-                              surveys[index]["time-stamp"],
-                              surveys[index]["survey-status"],
-                              surveys[index]["image-url"],
-                              surveys[index]["location"]);
-                        }),
+        appBar: AppBar(
+          title: Text("Approval"),
+          actions: <Widget>[
+            IconButton(
+                icon: Icon(Icons.help_outline),
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return ApprovalHelp();
+                  }));
+                }),
+          ],
+        ),
+        body: RefreshIndicator(
+            child: !surveysAvailable
+                ? Column(
+                    children: <Widget>[
+                      !isLoading
+                          ? Text("No surveys available...")
+                          : Container(),
+                      isLoading ? CircularProgressIndicator() : Container(),
+                    ],
                   )
-                ],
-              ),
-            ),
-    );
+                : Container(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Expanded(
+                          child: ListView.builder(
+                              itemCount: surveys.length,
+                              itemBuilder: (context, index) {
+                                return SurveyDescriptionCard(
+                                    surveys[index]["surveyer"],
+                                    surveys[index]["time-stamp"],
+                                    surveys[index]["survey-status"],
+                                    surveys[index]["image-url"],
+                                    surveys[index]["location"],
+                                    surveys[index]["surveyId"]);
+                              }),
+                        )
+                      ],
+                    ),
+                  ),
+            onRefresh: () {
+              isLoading = true;
+              return getSurveyDetails();
+            }));
   }
 }
 
 class SurveyDescriptionCard extends StatelessWidget {
-  final String user, date, status, imageUrl;
+  final String user, date, status, imageUrl, surveyId;
   final location;
-  SurveyDescriptionCard(
-      this.user, this.date, this.status, this.imageUrl, this.location);
+  SurveyDescriptionCard(this.user, this.date, this.status, this.imageUrl,
+      this.location, this.surveyId);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -189,7 +194,8 @@ class SurveyDescriptionCard extends StatelessWidget {
                                   user: user,
                                   date: date,
                                   imageUrl: imageUrl,
-                                  location: location);
+                                  location: location,
+                                  surveyId: surveyId);
                             }));
                           },
                           child: Row(

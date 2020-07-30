@@ -1,19 +1,57 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:jal_shakti_sush/classes/Constants.dart';
 import 'package:jal_shakti_sush/classes/localization/localization.dart';
 import 'package:jal_shakti_sush/screens/fullscreen_image.dart';
 
 class SurveyDetails extends StatelessWidget {
-  final String user, date;
+  final String user, date, surveyId;
   var url =
       "https://images.unsplash.com/photo-1497250681960-ef046c08a56e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60";
 
   final imageUrl;
   final location;
 
-  SurveyDetails({this.user, this.date, this.imageUrl, this.location});
+  SurveyDetails(
+      {this.user, this.date, this.imageUrl, this.location, this.surveyId});
+
+  Future<bool> approveSurvey(surveyId) async {
+    var prefs = await SharedPreferences.getInstance();
+    String state = prefs.getString("state");
+    var flag = false;
+    try {
+      var response = await http.post(SERVER_URL + '/api/survey/approve',
+          headers: <String, String>{
+            'Content-Type': 'application/json;charset=UTF-8'
+          },
+          body: jsonEncode({"surveyId": surveyId, "state": state}));
+
+      if (response.statusCode == 200) {
+        print("Done.......Data sent for approval.......");
+        var jsonResponse = jsonDecode(response.body);
+        print(jsonResponse);
+        if (jsonResponse['status'] == "OK") {
+          flag = true;
+        }
+      } else {
+        print(response.statusCode);
+      }
+    } on TimeoutException catch (e) {
+      print("Timeout exception...");
+    } on SocketException catch (e) {
+      print("Socket exception...");
+    } on Exception catch (e) {
+      print("Some error occurred....");
+    }
+    return flag;
+  }
 
   _showConfirmationDialogBox(BuildContext context) {
     showDialog(
@@ -31,8 +69,17 @@ class SurveyDetails extends StatelessWidget {
                 child: Text("No"),
               ),
               FlatButton(
-                onPressed: () {
+                onPressed: () async {
                   //update status of survey as approved in the database
+
+                  print(surveyId);
+                  var approved = await approveSurvey(surveyId);
+                  print(approved);
+                  if (approved) {
+                    print("Survey Approved....!");
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  }
                 },
                 child: Text("Yes"),
               ),
@@ -44,6 +91,10 @@ class SurveyDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //Widget to display user details
+
+    //Uncomment this line when hosted on server
+    url = SERVER_URL + "/" + imageUrl;
+
     final surveyDetailsHeader = Container(
       height: 100,
       width: double.maxFinite,
@@ -87,7 +138,8 @@ class SurveyDetails extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(10, 30, 10, 30),
               child: GestureDetector(
                 onTap: () {
-                  debugPrint("Image:$imageUrl");
+                  debugPrint("Image:${SERVER_URL + imageUrl}");
+
                   Navigator.push(context, MaterialPageRoute(builder: (_) {
                     return FullScreenImage(imageUrl: url);
                   }));
@@ -184,7 +236,7 @@ class SurveyDetails extends StatelessWidget {
                           await launch(appleMapsUrl, forceSafariVC: false);
                         }
                       } else {
-                        debugPrint("Couldn't launch URL");
+                        debugPrint("Couldn't launch URL on IOS");
                       }
                     },
                   ),
