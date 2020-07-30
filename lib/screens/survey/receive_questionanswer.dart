@@ -8,12 +8,14 @@ class ReceiveQuestionAnswer extends StatefulWidget {
 }
 
 class _ReceiveQuestionAnswerState extends State<ReceiveQuestionAnswer> {
-  final questionanswer = QuestionAnswer.questionanswer;
+  final questionanswer = QuestionAnswer.generalQuestions;
   Map<String, String> surveyData =
       {}; //contains the questions number and corresponding answer
+  var selectedOption = '';
   @override
   void initState() {
     super.initState();
+    print(questionanswer);
     for (int i = 0; i < questionanswer.length; i++) {
       surveyData[i.toString()] = '';
     }
@@ -27,42 +29,33 @@ class _ReceiveQuestionAnswerState extends State<ReceiveQuestionAnswer> {
     print(surveyData);
   }
 
+  setSelectedOption(String option) {
+    setState(() {
+      selectedOption = option;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.maxFinite,
       height: MediaQuery.of(context).size.height,
-      child: Column(
-        children: <Widget>[
-          Container(
-            height: 550,
-            child: ListView.builder(
-                itemCount: questionanswer.length,
-                itemBuilder: (context, index) {
-                  return NewCard(
-                    index,
-                    onAnswerChanged,
-                    questionanswer[index]["question"],
-                    questionanswer[index]["imgurl"],
-                    questionanswer[index]["answers"],
-                  );
-                }),
-          ),
-
-          //create listview of type2 questions
-
-          //create listview of type3 questions
-
-          //button to submit all data
-          Container(
-            child: RaisedButton(
-                child: Text("Finish"),
-                color: Colors.blue[200],
-                onPressed: () {
-                  //send survey data to server
-                }),
-          ),
-        ],
+      child: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            for (var i = 0; i < questionanswer.length; i++)
+              NewCard(i, onAnswerChanged, questionanswer[i]["question"],
+                  questionanswer[i]["imgurl"], questionanswer[i]["answers"]),
+            Container(
+              child: RaisedButton(
+                  child: Text("Finish"),
+                  color: Colors.blue[200],
+                  onPressed: () {
+                    //send survey data to server
+                  }),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:jal_shakti_sush/classes/Constants.dart';
 import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';
 
@@ -50,7 +51,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Take a picture')),
+      //appBar: AppBar(title: Text('Take a picture')),
       // Wait until the controller is initialized before displaying the
       // camera preview. Use a FutureBuilder to display a loading spinner
       // until the controller has finished initializing.
@@ -68,7 +69,12 @@ class TakePictureScreenState extends State<TakePictureScreen> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.camera),
+        child: Icon(
+          Icons.camera,
+          size: 50,
+        ),
+        backgroundColor: myBlue,
+        tooltip: 'Capture',
         // Provide an onPressed callback.
         onPressed: () async {
           // Take the Picture in a try / catch block. If anything goes wrong,
@@ -114,31 +120,16 @@ class DisplayPictureScreen extends StatelessWidget {
   const DisplayPictureScreen({Key key, this.imagePath, this.setImagepath})
       : super(key: key);
 
-  sendImageToServer(imagePath) async {
-    UploadData request = UploadData();
-    bool sent = await request.sendImageDataToServer(
-        imagePath, '/api/survey/uploadImage');
-    if (sent) {
-      print(request.getResponse());
-    } else {
-      print(request.getErrorResponse());
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     MediaQueryData mediaQueryData = MediaQuery.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text('Captured Picture')),
+      //appBar: myAppBar('Captured Picture'),
       // The image is stored as a file on the device. Use the `Image.file`
       // constructor with the given path to display the image.
       body: Stack(
         children: <Widget>[
           Positioned(
-            left: 10,
-            right: 10,
-            top: 10,
-            bottom: 10,
             child: Container(
               width: mediaQueryData.size.width,
               height: mediaQueryData.size.height,
@@ -151,33 +142,57 @@ class DisplayPictureScreen extends StatelessWidget {
           ),
           Positioned(
             bottom: 10,
-            left: 20,
-            child: ButtonBar(
-              buttonPadding: EdgeInsets.all(20),
-              alignment: MainAxisAlignment.center,
-              children: <Widget>[
-                RaisedButton(
-                  padding: EdgeInsets.all(15),
-                  child: Text('Re-take picture'),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                RaisedButton(
-                  padding: EdgeInsets.all(15),
-                  child: Text('Confirm'),
-                  onPressed: () {
-                    if (imagePath != null) {
-                      setImagepath(imagePath);
-                      //sendImageToServer(imagePath);
-                    }
-                    //Go back to take picture screen
-                    Navigator.pop(context);
-                    //Go back to main screen where you came from
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
+            child: Container(
+              width: mediaQueryData.size.width,
+              padding: EdgeInsets.all(10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Expanded(
+                    flex: 1,
+                    child: RaisedButton(
+                      padding: EdgeInsets.all(15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      color: Colors.orange,
+                      child: Text(
+                        'Re-take picture',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: RaisedButton(
+                      padding: EdgeInsets.all(15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      color: myBlue,
+                      child: Text(
+                        'Confirm',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onPressed: () {
+                        if (imagePath != null) {
+                          setImagepath(imagePath);
+                        }
+                        //Go back to take picture screen
+                        Navigator.pop(context);
+                        //Go back to main screen where you came from
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],

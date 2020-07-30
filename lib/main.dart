@@ -1,13 +1,25 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:device_preview/device_preview.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:jal_shakti_sush/classes/localization/localization.dart';
 import 'package:jal_shakti_sush/screens/jal_shakti_home.dart';
 
-void main() => runApp(MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  var status = false;
+  try {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    status = prefs.getBool('isLoggedIn');
+    print("Status:$status");
+  } on Error catch (e) {
+    print("Error in main.dart: : $e");
+  }
+  if (status == null) status = false;
+  runApp(MyApp(status));
+}
 
 // void main() {
 //   runApp(DevicePreview(
@@ -25,6 +37,9 @@ class MyApp extends StatefulWidget {
     });
   }
 
+  bool status = false;
+  MyApp(this.status);
+
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -32,20 +47,35 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   Locale locale;
   bool localeLoaded = false;
-
+  SharedPreferences prefs;
+  bool isLoggedIn = false;
   @override
   void initState() {
-    super.initState();
     this._fetchLocale().then((locale) {
       setState(() {
         this.localeLoaded = true;
         this.locale = locale;
       });
     });
+    super.initState();
   }
+
+  // Future<bool> checkIfLoggedIn() async {
+  //   prefs = await SharedPreferences.getInstance();
+  //   var loggedIn = prefs.getBool('isLoggedIn');
+  //   if (loggedIn == true)
+  //     return true;
+  //   else
+  //     return false;
+  // }
 
   @override
   Widget build(BuildContext context) {
+    // if (checkIfLoggedIn()) {
+    //   setState(() {
+    //     isLoggedIn = true;
+    //   });
+    // }
     return MaterialApp(
       title: 'Jal SHakti',
       theme: ThemeData(
@@ -67,7 +97,7 @@ class _MyAppState extends State<MyApp> {
       home: SafeArea(
         child: Stack(
           children: <Widget>[
-            JalShaktiHome(),
+            widget.status ? JalShaktiHome(user: 'admin') : JalShaktiHome()
           ],
         ),
       ),
