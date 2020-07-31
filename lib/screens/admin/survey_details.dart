@@ -11,10 +11,9 @@ import 'package:jal_shakti_sush/classes/Constants.dart';
 import 'package:jal_shakti_sush/classes/localization/localization.dart';
 import 'package:jal_shakti_sush/screens/fullscreen_image.dart';
 
-class SurveyDetails extends StatelessWidget {
+class SurveyDetails extends StatefulWidget {
   final String user, date, surveyId;
-  var url =
-      "https://images.unsplash.com/photo-1497250681960-ef046c08a56e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60";
+  var url = "";
 
   final imageUrl;
   final location;
@@ -22,16 +21,29 @@ class SurveyDetails extends StatelessWidget {
   SurveyDetails(
       {this.user, this.date, this.imageUrl, this.location, this.surveyId});
 
+  @override
+  _SurveyDetailsState createState() => _SurveyDetailsState();
+}
+
+class _SurveyDetailsState extends State<SurveyDetails> {
+  bool isApproving = false;
+
   Future<bool> approveSurvey(surveyId) async {
     var prefs = await SharedPreferences.getInstance();
     String state = prefs.getString("state");
+    String district = prefs.getString("district");
+    print("District from surveydetails........$district");
     var flag = false;
+    setState(() {
+      isApproving = true;
+    });
     try {
       var response = await http.post(SERVER_URL + '/api/survey/approve',
           headers: <String, String>{
             'Content-Type': 'application/json;charset=UTF-8'
           },
-          body: jsonEncode({"surveyId": surveyId, "state": state}));
+          body: jsonEncode(
+              {"surveyId": surveyId, "state": state, "district": district}));
 
       if (response.statusCode == 200) {
         print("Done.......Data sent for approval.......");
@@ -50,6 +62,9 @@ class SurveyDetails extends StatelessWidget {
     } on Exception catch (e) {
       print("Some error occurred....");
     }
+    setState(() {
+      isApproving = false;
+    });
     return flag;
   }
 
@@ -68,21 +83,25 @@ class SurveyDetails extends StatelessWidget {
                 },
                 child: Text("No"),
               ),
-              FlatButton(
-                onPressed: () async {
-                  //update status of survey as approved in the database
+              isApproving
+                  ? CircularProgressIndicator()
+                  : FlatButton(
+                      onPressed: () async {
+                        //update status of survey as approved in the database
 
-                  print(surveyId);
-                  var approved = await approveSurvey(surveyId);
-                  print(approved);
-                  if (approved) {
-                    print("Survey Approved....!");
-                    Navigator.pop(context);
-                    Navigator.pop(context);
-                  }
-                },
-                child: Text("Yes"),
-              ),
+                        print(widget.surveyId);
+
+                        var approved = await approveSurvey(widget.surveyId);
+                        print(approved);
+
+                        if (approved) {
+                          print("Survey Approved....!");
+                          Navigator.pop(context);
+                        }
+                        Navigator.pop(context);
+                      },
+                      child: Text("Yes"),
+                    ),
             ],
           );
         });
@@ -93,7 +112,7 @@ class SurveyDetails extends StatelessWidget {
     //Widget to display user details
 
     //Uncomment this line when hosted on server
-    url = SERVER_URL + "/" + imageUrl;
+    widget.url = SERVER_URL + "/" + widget.imageUrl;
 
     final surveyDetailsHeader = Container(
       height: 100,
@@ -112,13 +131,15 @@ class SurveyDetails extends StatelessWidget {
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(top: 15, bottom: 10, left: 20),
-                  child: Text(
-                      AppLocalizations.of(context).surveyer + " : " + user),
+                  child: Text(AppLocalizations.of(context).surveyer +
+                      " : " +
+                      widget.user),
                 ),
                 Padding(
                   padding: EdgeInsets.only(top: 5, bottom: 10, left: 20),
-                  child: Text(
-                      AppLocalizations.of(context).surveyDate + " : " + date),
+                  child: Text(AppLocalizations.of(context).surveyDate +
+                      " : " +
+                      widget.date),
                 ),
               ],
             ),
@@ -138,16 +159,16 @@ class SurveyDetails extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(10, 30, 10, 30),
               child: GestureDetector(
                 onTap: () {
-                  debugPrint("Image:${SERVER_URL + imageUrl}");
+                  debugPrint("Image:${SERVER_URL + widget.imageUrl}");
 
                   Navigator.push(context, MaterialPageRoute(builder: (_) {
-                    return FullScreenImage(imageUrl: url);
+                    return FullScreenImage(imageUrl: widget.url);
                   }));
                 },
                 child: Hero(
                   tag: "fullImage",
                   child: Image.network(
-                    url,
+                    widget.url,
                     loadingBuilder: (BuildContext context, Widget child,
                         ImageChunkEvent loadingProgress) {
                       if (loadingProgress == null) return child;
@@ -201,7 +222,7 @@ class SurveyDetails extends StatelessWidget {
                           bottom: 10,
                         ),
                         child: Text(
-                          "${location['latitude']},${location['longitude']}",
+                          "${widget.location['latitude']},${widget.location['longitude']}",
                           style: TextStyle(color: Colors.lightBlueAccent),
                         ),
                       ),
@@ -221,10 +242,10 @@ class SurveyDetails extends StatelessWidget {
                     ),
                     onPressed: () async {
                       final String googleMapsUrl =
-                          "https://www.google.com/maps/search/?api=1&query=${location['latitude']},${location['longitude']}";
+                          "https://www.google.com/maps/search/?api=1&query=${widget.location['latitude']},${widget.location['longitude']}";
 
                       final String appleMapsUrl =
-                          "https://maps.apple.com/?q=${location['latitude']},${location['longitude']}";
+                          "https://maps.apple.com/?q=${widget.location['latitude']},${widget.location['longitude']}";
 
                       if (Platform.isAndroid) {
                         if (await canLaunch(googleMapsUrl)) {
@@ -318,6 +339,5 @@ class SurveyDetails extends StatelessWidget {
         ),
       ),
     );
-  } //build
-
+  }
 }
